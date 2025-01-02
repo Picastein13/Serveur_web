@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include <sys/types.h>
 #include <sys/socket.h>
-//#include <string.h>
+#include <string.h>
 #include <unistd.h>
 #include <arpa/inet.h>
 #include <netinet/in.h>
@@ -13,11 +13,21 @@
 *   Definire  le type de la socket dans ce cas 8080                                                      *
 *    pour ne pas avoir des problemes adminstratif sinon on pourra utiliser 80 pour un serveur web http   *
 **********************************************************************************************************/
-#define PORT 8080
+#define PORT 80
 
 
 int main() {
+    //Déclarations des Variables 
     int server_fd = -1;
+    struct sockaddr_in6 address; 
+    memset(&address, 0, sizeof(address));    // Initialiser la structure à 0
+
+    //Initialisation des variables:
+    address.sin6_family = AF_INET6;                 // Utilise IPv6
+    address.sin6_addr = in6addr_any;               // Accepte les connexions sur toutes les adresses locales
+    address.sin6_port = htons(PORT);   // Convertir le port en ordre réseau
+
+
 
     /******************************************************************************************
     * https://www.linuxhowtos.org/manpages/2/socket.htm
@@ -30,8 +40,18 @@ int main() {
         perror("Erreur lors de la création du socket");
         exit(EXIT_FAILURE);
     }
+    printf("Socket créé avec succès !\n");
+    
+
+    if (bind(server_fd, (struct sockaddr *)&address, sizeof(address)) < 0) {
+        perror("Erreur lors du bind");
+        close(server_fd);  // Libérer les ressources
+        exit(EXIT_FAILURE);
+    }
+    printf("Socket lié à l'adresse et au port %d avec succès !\n", PORT);
+
     
     
-    printf("Webserver initialisé !\n");
+    
     return 0;
 }
