@@ -42,13 +42,29 @@ int main() {
     }
     printf("Socket créé avec succès !\n");
     
+    /******************************************************************************************
+    * https://www.linuxhowtos.org/manpages/2/bind.htm
+    * bind() lie le socket à l'adresse et au port spécifiés.  
+    ****************************************************************************************** */
 
     if (bind(server_fd, (struct sockaddr *)&address, sizeof(address)) < 0) {
+        // Pour port 80 utililser sudo pour lancer le programme !!!!
         perror("Erreur lors du bind");
         close(server_fd);  // Libérer les ressources
         exit(EXIT_FAILURE);
     }
     printf("Socket lié à l'adresse et au port %d avec succès !\n", PORT);
+    
+    /******************************************************************************************
+    * https://www.linuxhowtos.org/manpages/2/listen.htm
+    * listen() permet au serveur d'accepter les connexions entrantes.  
+    ****************************************************************************************** */
+    if (listen(server_fd, 6) < 0) {
+        perror("Erreur lors du listen");
+        close(server_fd);
+        exit(EXIT_FAILURE);
+    }
+    printf("Serveur en attente de connexions sur le port %d...\n", PORT);
 
     
     
